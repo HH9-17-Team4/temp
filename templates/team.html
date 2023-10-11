@@ -2,124 +2,141 @@
 <html lang="en">
 
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Meet the members!</title>
-	<style>
-		body {
-			font-family: Arial, sans-serif;
-		}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meet the members!</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh; /* 화면 높이의 100% */
+    }
 
-		nav {
-			background-color: #000;
-			color: #fff;
-			display: flex;
-			justify-content: flex-end;
-			align-items: center;
-			padding: 10px 20px;
-		}
+    nav {
+      background-color: #000;
+      color: #fff;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 10px 20px;
+      width: 100%;
+      position: absolute;
+      top: 0;
+    }
 
-		nav ul {
-			list-style: none;
-			padding: 0;
-			display: flex;
-		}
+    nav ul {
+      list-style: none;
+      padding: 0;
+      display: flex;
+    }
 
-		nav li {
-			margin: 0 20px;
-		}
+    nav li {
+      margin: 0 20px;
+    }
 
-		nav a {
-			text-decoration: none;
-			color: #fff;
-		}
+    nav a {
+      text-decoration: none;
+      color: #fff;
+    }
 
-		.team-section {
-			display: flex;
-			flex-wrap: wrap;
-			justify-content: center;
-			padding: 20px;
-		}
+    .team-section {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 20px;
+    }
 
-		.team-row {
-			display: flex;
-			flex-wrap: wrap;
-			justify-content: center;
-		}
+    .team-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
 
-		.team-member {
-			/* 테두리를 없애는 스타일 */
-			border: none;
-			padding: 10px;
-			margin: 10px;
-			text-align: center;
-			width: 200px;
-		}
+    .team-member {
+      border: none;
+      padding: 10px;
+      margin: 10px;
+      text-align: center;
+      width: 200px;
+    }
 
-		.team-member img {
-			max-width: 100%;
-		}
-	</style>
+    .team-member img {
+      max-width: 100%;
+    }
+  </style>
 </head>
 
 <body>
-	<nav>
-		<ul>
-			<li><a href="{{ url_for('main') }}">Home</a></li>
-			<li><a href="question.html">BookBTI</a></li>
-			<li><a href="{{ url_for('team') }}">Team</a></li>
-		</ul>
-	</nav>
+  <nav style="padding-left: 0; padding-right: 50px;">
+    <ul>
+      <li><a href="main.html">Home</a></li>
+      <li><a href="question.html">BookBTI</a></li>
+      <li><a href="team.html" style="margin-right: 20px;">Team</a></li>
+    </ul>
+  </nav>
 
-	<div id="content">
-		<div id="home">
-			<h1>BookBTI</h1>
-			<h1>Meet the members!</h1>
-		</div>
 
-		<div id="team" class="team-section">
-			<div class="team-row">
-				<div class="team-member">
-					<img src="https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQhO9m9MNMUMqw6q-hJdatiW2MgdUzeOpC-culO_OwdzlnHa7K9"
-						alt="John">
-					<h2>이현범</h2>
-					<p>주변 도서관 안내 페이지</p>
-				</div>
-				<div class="team-member">
-					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgY_JlLVqZnGN6J1S50ffpFrifZK_xlue7Qg&usqp=CAU"
-						alt="Sarah">
-					<h2>이성령</h2>
-					<p>주변 도서관 안내 페이지</p>
-				</div>
-				<div class="team-member">
-					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgY_JlLVqZnGN6J1S50ffpFrifZK_xlue7Qg&usqp=CAU"
-						alt="강요셉">
-					<h2>강요셉</h2>
-					<p>테스트 결과 페이지</p>
-				</div>
-			</div>
-			<div class="team-row">
-				<div class="team-member">
-					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgY_JlLVqZnGN6J1S50ffpFrifZK_xlue7Qg&usqp=CAU"
-						alt="김대환">
-					<h2>김대환</h2>
-					<p>테스트 결과 페이지</p>
-				</div>
-				<div class="team-member">
-					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgY_JlLVqZnGN6J1S50ffpFrifZK_xlue7Qg&usqp=CAU"
-						alt="이진서">
-					<h2>이진서</h2>
-					<p>메인 페이지</p>
-				</div>
-				<div class="team-member">
-					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgY_JlLVqZnGN6J1S50ffpFrifZK_xlue7Qg&usqp=CAU"
-						alt="류시영">
-					<h2>류시영</h2>
-					<p>메인 페이지</p>
-				</div>
-			</div>
-		</div>
-	</div>
+  <div id="content">
+    <div id="home">
+      <h1>BookBTI</h1>
+      <h1>Meet the members!</h1>
+    </div>
+
+    <div id="team" class="team-section">
+      <div class="team-row">
+        <div class="team-member">
+          <img
+            src="https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQhO9m9MNMUMqw6q-hJdatiW2MgdUzeOpC-culO_OwdzlnHa7K9"
+            alt="John">
+          <h2>이현범</h2>
+          <h2>ENFJ</h2>
+          <p><a href="map.html">주변 도서관 안내 페이지</a></p>
+        </div>
+        <div class="team-member">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgY_JlLVqZnGN6J1S50ffpFrifZK_xlue7Qg&usqp=CAU"
+            alt="Sarah">
+          <h2>이성령</h2>
+          <h2>ISFJ</h2>
+          <p><a href="map.html">주변 도서관 안내 페이지</a></p>
+        </div>
+        <div class="team-member">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgY_JlLVqZnGN6J1S50ffpFrifZK_xlue7Qg&usqp=CAU"
+            alt="강요셉">
+          <h2>강요셉</h2>
+          <h2>ISTP</h2>
+          <p><a href="result.html">테스트 결과 페이지</a></p>
+        </div>
+      </div>
+      <div class="team-row">
+        <div class="team-member">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgY_JlLVqZnGN6J1S50ffpFrifZK_xlue7Qg&usqp=CAU"
+            alt="김대환">
+          <h2>김대환</h2>
+          <h2>INTJ</h2>
+          <p><a href="result.html">테스트 결과 페이지</a></p>
+        </div>
+        <div class="team-member">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgY_JlLVqZnGN6J1S50ffpFrifZK_xlue7Qg&usqp=CAU"
+            alt="이진서">
+          <h2>이진서</h2>
+          <h2>INTP</h2>
+          <p><a href="main.html">메인 페이지</a></p>
+        </div>
+        <div class="team-member">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgY_JlLVqZnGN6J1S50ffpFrifZK_xlue7Qg&usqp=CAU"
+            alt="류시영">
+          <h2>류시영</h2>
+          <h2>INTP</h2>
+          <p><a href="main.html">메인 페이지</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 
 </html>
