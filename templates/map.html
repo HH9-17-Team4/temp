@@ -4,6 +4,42 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <style>
+      body {
+        width: 100%;
+      }
+      .map-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 90vw;
+        height: 90vh;
+      }
+      #map {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
   </head>
-  <body></body>
+  <body>
+    <h1>맵</h1>
+    <div class="map-wrapper">
+      <div id="map"></div>
+    </div>
+    <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=5c265b3b81bbbbcdbc61122a716ea7d1"></script>
+    <script>
+      function initMap() {
+        let container = document.getElementById("map");
+        let options = {
+          center: new kakao.maps.LatLng(37.566826, 126.9786567), // 기본 좌표 설정 (서울 시청)
+          level: 3, // 지도 확대 레벨
+        };
+        let map = new kakao.maps.Map(container, options); // 특정 장소의 주소나 좌표로 이동하고 싶다면 여기에 추가적인 코드를 작성
+      }
+      // Kakao 지도 API 스크립트를 로드한 후 initMap 함수를 호출
+      kakao.maps.load(function () {
+        initMap();
+      });
+    </script>
+  </body>
 </html>
