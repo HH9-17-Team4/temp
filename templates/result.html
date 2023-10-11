@@ -1,9 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-  </head>
-  <body></body>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>테스트 결과</title>
+    <style>
+        .content {
+            max-width: 600px;
+            margin: auto;
+        }
+
+        .img {
+            width: 200px;
+            height: 300px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .title {
+            text-align: center;
+        }
+
+        .contents {
+            text-align: center;
+        }
+
+        .button-container{
+            text-align: center;
+            display: inline-block;
+            display: flex;
+
+        }
+
+        .btn {
+            justify-content: center;
+            align-items: center;
+            background-color: lightblue;
+            color: black;
+            padding: 15px 25px;
+            margin: 50px;
+            width: 200px;
+            height: 75px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="content">
+        <!--책 이미지 / 책 제목 / 책 소개-->
+        <ul class="book_page">
+            <img id="foo" src="https://image.aladin.co.kr/product/32575/8/cover500/k642935143_1.jpg" alt="book_cover">
+            <t>
+                <h2 id="title">해리포터와 아즈카반의 죄수 (미나리마 에디션)</h2>
+            </t>
+            <t>
+                <h3 id="contents">영화〈해리 포터〉와 〈신비한 동물사전〉시리즈에서 비주얼 그래픽을 담당했던 스튜디오 ‘미나리마(MinaLima)’가 직접 디자인한 시리즈 ‘미나리마
+                    에디션’의 세 번째 이야기
+                </h3>
+            </t>
+        </ul>
+        <div class="button-container">
+            <!--알라딘 구매 링크-->
+            <a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=325750834"><button class="btn">구매하러
+                    가기</button></a>
+            <!--대여 링크 부분은 지우시면 됩니다-->
+            <a href="https://lib.seoul.go.kr/rwww/html/ko/smartlibrary.jsp"><button class="btn">대여하러
+                    가기</button></a>
+        </div>
+    </div>
+</body>
+
 </html>
