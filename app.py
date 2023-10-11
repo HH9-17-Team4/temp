@@ -1,13 +1,30 @@
 from flask import Flask, render_template
+from datetime import datetime
+import requests
+import json
 
 app = Flask(__name__)
 
 
 @app.route("/main")
 def main():
-  context = {
+  # 가져올 베스트셀러 권 수 (디폴트 4권)
+  numOfBook = 4
+  # 가져올 날짜 ('YYYY-MM-DD', 공백시 오늘날짜)
+  date = ''
+  # 날짜 구하기
+  def getDate(inputDate=datetime.today().strftime("%Y-%m-%d")):
+    dateObj = datetime.strptime(inputDate, "%Y-%m-%d")
+    date = dateObj.strftime("%Y-%m-%d").split('-')
+    year, month = date[0], date[1]
+    firstDay = dateObj.replace(day=1)
+    week = (dateObj - firstDay).days // 7 + 1
+    return year, month, week
 
-  }
+  year, month, week = getDate(date) if date != '' else getDate()
+  res = requests.get(f"https://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=ttbgarry94571426002&QueryType=Bestseller&MaxResults={numOfBook}&start=1&SearchTarget=Book&output=js&Year={year}&Month={month}&Week={week}&Version=20131101")
+  rjson = res.json()
+  context = rjson['item']
   return render_template("main.html", data=context)
 
 @app.route("/team")
