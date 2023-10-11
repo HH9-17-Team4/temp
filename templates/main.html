@@ -1,10 +1,153 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <style></style>
-  </head>
-  <body></body>
-</html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        nav {
+            background-color: #000;
+            color: #fff;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 10px 20px;
+            width: 100%;
+            position: absolute;
+            top: 0;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+        }
+
+        nav li {
+            margin: 0 20px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .main-content {
+            text-align: center;
+            width: 100%;
+        }
+
+        .btn-container {
+            text-align: center;
+            margin-top: 30px; /* 여백 추가 */
+        }
+
+        .btn {
+            background-color: #000;
+            color: #fff;
+            padding: 20px 40px;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background-color: #333;
+        }
+
+        /* 여백 추가 */
+        .main-content h1, .main-content p {
+            margin-bottom: 30px;
+        }
+
+        /* 오늘의 책 카드 스타일 */
+        .book-card {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            text-align: center;
+        }
+
+        .book {
+            border: 1px solid #ccc;
+            padding: 10px;
+            width: 200px;
+            text-align: center;
+        }
+
+        .book img {
+            max-width: 100%;
+        }
+
+        /* 카드 제목 스타일 */
+        .card-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px; /* 제목과 카드 사이 여백 추가 */
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="main.html">Home</a></li>
+            <li><a href="question.html">BookBTI</a></li>
+            <li><a href="team.html">Team</a></li>
+        </ul>
+    </nav>
+
+    <div class="main-content">
+      <h1>Welcome to BookBTI!</h1>
+      <p style="margin-bottom: 30px;">당신에게 맞는 퍼스널 책을 찾아보세요</p>
+      
+      <div class="btn-container" style="margin-bottom: 400px;">
+            <a class="btn" href="question.html">추천 받으러 가기</a>
+        </div>
+      
+        <!-- 오늘의 추천 책 제목 -->
+        <h2 class="card-title" style="margin-새ㅔ: 400px;" >오늘의 추천 책</h2>
+
+        <div class="book-card">
+            <!-- 첫 번째 책 카드 -->
+            <div class="book">
+                <img src="book1.jpg" alt="Book 1">
+                <h2>책 제목 1</h2>
+                <p>작가 1</p>
+                <p>책 설명 1</p>
+            </div>
+
+            <!-- 두 번째 책 카드 -->
+            <div class="book">
+                <img src="book2.jpg" alt="Book 2">
+                <h2>책 제목 2</h2>
+                <p>작가 2</p>
+                <p>책 설명 2</p>
+            </div>
+
+            <!-- 세 번째 책 카드 -->
+            <div class="book">
+                <img src="book3.jpg" alt="Book 3">
+                <h2>책 제목 3</h2>
+                <p>작가 3</p>
+                <p>책 설명 3</p>
+            </div>
+
+            <!-- 네 번째 책 카드 -->
+            <div class="book">
+              <img src="book3.jpg" alt="Book 3">
+              <h2>책 제목 4</h2>
+              <p>작가 4</p>
+              <p>책 설명 4</p>
+          </div>
