@@ -49,10 +49,12 @@
     <div id="menu_wrap" class="bg_white">
         <div class="option">
             <div>
+                {%for sto in data%}
                 <form onsubmit="searchPlaces(); return false;">
-                    키워드 : <input type="text" value="알라딘 서점" id="keyword" size="15"> 
+                    키워드 : <input type="text" value="{{sto.offName}}" id="keyword" size="15"> 
                     <button type="submit">검색하기</button> 
                 </form>
+                {%endfor%}
             </div>
         </div>
         <hr>
