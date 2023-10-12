@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MBTI 테스트</title>
+  </head>
+  <body>
+    <h1>테슷흐</h1>
+    <form action="{{ url_for('answer') }}" method="post">
+      <h2>{{ data.title }}</h2>
+      <input type="hidden" name="question_id" value="{{ data.id }}" />
+      <input type="hidden" name="choose_type" value="{{ data.choose_type }}" />
+      <button type="submit" name="option" value="A" data-answer="-1">
+        {{ data.option_A }}
+      </button>
+      <button type="submit" name="option" value="B" data-answer="1">
+        {{ data.option_B }}
+      </button>
+    </form>
+  </body>
+</html>
