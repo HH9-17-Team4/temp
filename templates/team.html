@@ -7,6 +7,18 @@
 	<title>Meet the members!</title>
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
 		integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+	<style>
+		@font-face {
+			font-family: "Pretendard-Regular";
+			src: url("https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff")
+			format("woff");
+			font-weight: 400;
+			font-style: normal;
+		}
+		body {
+			font-family: "Pretendard-Regular";
+		}
+	</style>
 </head>
 
 <body>
@@ -24,7 +36,7 @@
 						<a class="nav-link active" aria-current="page" href="{{ url_for('main') }}">Home</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="question.html">BookBTI</a>
+						<a class="nav-link" href="{{ url_for('test') }}">BookBTI</a>
 					</li>
 					<li class="nav-item">
 						<a class="nav-link" href="{{ url_for('team') }}">Team</a>
@@ -42,65 +54,44 @@
 		</div>
 		<div class="row">
 			<div class="col">
-				<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwS91RLAvI5CIDhbCTtr4E3Q6inYEEfME9WqWJaIUyVDKJyqanxSaa8mRvnwozhU47bVE&usqp=CAU"
-					alt="이현범" width="225px" height="225px">
+				<img src="static/이현범.png" alt="이현범" width="225px" height="225px">
 				<h2>이현범</h2>
 				<h2>ENFJ</h2>
+				<p>알라딘 서점 재고 조사 안내 페이지</p>
 			</div>
 			<div class="col">
-				<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcToeLKgJbSDd2ENfPoTxh6NZURLWzhp9BoaW9vHz2CrhqsZNacvCoXKS4WchsyM4kF0bsY&usqp=CAU"
-					alt="이성령">
+				<img src="static/이성령.png" alt="이성령" width="225px" height="225px">
 				<h2>이성령</h2>
 				<h2>ISFJ</h2>
+				<p>테스트 페이지</p>
 			</div>
 			<div class="col">
-				<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcToeLKgJbSDd2ENfPoTxh6NZURLWzhp9BoaW9vHz2CrhqsZNacvCoXKS4WchsyM4kF0bsY&usqp=CAU"
-					alt="강요셉">
+				<img src="static/강요셉.png" alt="강요셉" width="225px" height="225px">
 				<h2>강요셉</h2>
 				<h2>ISTP</h2>
-			</div>
-		</div>
-		<div class="row justify-content-center">
-			<div class="col">
-				<a class="btn btn-link" href="map.html" role="button">주변 도서관 안내 페이지</a>
-			</div>
-			<div class="col">
-				<a class="btn btn-link" href="map.html" role="button">주변 도서관 안내 페이지</a>
-			</div>
-			<div class="col">
-				<a class="btn btn-link" href="result.html" role="button">테스트 결과 페이지</a>
+				<p>테스트 결과 페이지</p>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col">
-				<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcToeLKgJbSDd2ENfPoTxh6NZURLWzhp9BoaW9vHz2CrhqsZNacvCoXKS4WchsyM4kF0bsY&usqp=CAU"
-					alt="김대환">
+				<img src="static/김대환.png" alt="김대환" width="225px" height="225px">
 				<h2>김대환</h2>
 				<h2>INTJ</h2>
+				<p>테스트 결과 페이지</p>
 			</div>
 			<div class="col">
-				<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcToeLKgJbSDd2ENfPoTxh6NZURLWzhp9BoaW9vHz2CrhqsZNacvCoXKS4WchsyM4kF0bsY&usqp=CAU"
-					alt="이진서">
+				<img src="static/이진서.png" alt="이진서" width="225px" height="225px">
 				<h2>이진서</h2>
 				<h2>INTP</h2>
+				<p>메인 페이지</p>
 			</div>
 			<div class="col">
-				<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcToeLKgJbSDd2ENfPoTxh6NZURLWzhp9BoaW9vHz2CrhqsZNacvCoXKS4WchsyM4kF0bsY&usqp=CAU"
-					alt="류시영">
+				<img src="static/류시영.png" alt="류시영" width="225px" height="225px">
 				<h2>류시영</h2>
 				<h2>INTP</h2>
+				<p>메인 페이지</p>
 			</div>
 		</div>
-		<div class="row justify-content-center">
-			<div class="col">
-				<a class="btn btn-link" href="result.html" role="button">테스트 결과 페이지</a>
-			</div>
-			<div class="col">
-				<a class="btn btn-link" href="main.html" role="button">메인 페이지</a>
-			</div>
-			<div class="col">
-				<a class="btn btn-link" href="main.html" role="button">메인 페이지</a>
-			</div>
 		</div>
 	</div>
 
