@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Document</title>
+	<style>
+		#map {
+			width: 100%;
+			height: 100%;
+		}
+
+		.table-wrapper {
+			height: 80vh;
+			overflow: scroll;
+		}
+	</style>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+</head>
+
+<body>
+	<!-- 네비게이션 바 -->
+	<nav class="navbar navbar-expand-lg bg-body-tertiary d-flex justify-content-between" data-bs-theme="dark">
+		<div class="container-fluid">
+			<a class="navbar-brand" href="{{ url_for('main') }}">BookBTI</a>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+				aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+				<ul class="navbar-nav">
+					<li class="nav-item">
+						<a class="nav-link active" aria-current="page" href="{{ url_for('main') }}">Home</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="question.html">BookBTI</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="{{ url_for('team') }}">Team</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<!-- 지도 및 리스트 컨테이너 -->
+	<div class="container-fluid pt-5 mb-5">
+		<div class="row">
+			<div class="col">
+				<div class="display-3 text-center mb-3">대여하기</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col">
+				<div id="map"></div>
+			</div>
+			<div class="col">
+				<div class="table-wrapper">
+					<table class="table table-hover" id="libTable">
+						<thead>
+							<tr>
+								<th scope="col"></th>
+								<th scope="col">도서관</th>
+								<th scope="col">주소</th>
+								<th scope="col">전화번호</th>
+								<th scope="col">홈페이지</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	</div>
+
+	<script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=87dd39dce31b86c5b16154a6f2f29a02"></script>
+	<script>
+		function initMap() {
+			let container = document.getElementById("map");
+			let options = {
+				center: new kakao.maps.LatLng(37.566826, 126.9786567), // 기본 좌표 설정 (서울 시청)
+				level: 4, // 지도 확대 레벨
+			};
+			let map = new kakao.maps.Map(container, options); // 특정 장소의 주소나 좌표로 이동하고 싶다면 여기에 추가적인 코드를 작성
+		}
+		// Kakao 지도 API 스크립트를 로드한 후 initMap 함수를 호출
+		kakao.maps.load(function () {
+			initMap();
+		});
+
+		var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+			mapOption = {
+				center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+				level: 9 // 지도의 확대 레벨 
+			};
+
+		var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+		// HTML5의 geolocation으로 사용할 수 있는지 확인합니다 
+		if (navigator.geolocation) {
+
+			// GeoLocation을 이용해서 접속 위치를 얻어옵니다
+			navigator.geolocation.getCurrentPosition(function (position) {
+
+				var lat = position.coords.latitude, // 위도
+					lon = position.coords.longitude; // 경도
+
+				var locPosition = new kakao.maps.LatLng(lat, lon), // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
+					message = '<div style="padding:5px;">현재 위치 입니다</div>'; // 인포윈도우에 표시될 내용입니다
+
+				// 마커와 인포윈도우를 표시합니다
+				displayMarker(locPosition, message);
+
+			});
+
+		} else { // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
+
+			var locPosition = new kakao.maps.LatLng(33.450701, 126.570667),
+				message = 'geolocation을 사용할수 없어요..'
+
+			displayMarker(locPosition, message);
+		}
+
+		// 지도에 마커와 인포윈도우를 표시하는 함수입니다
+		function displayMarker(locPosition, message) {
+
+			// 마커를 생성합니다
+			var marker = new kakao.maps.Marker({
+				map: map,
+				position: locPosition
+			});
+
+			var iwContent = message, // 인포윈도우에 표시할 내용
+				iwRemoveable = true;
+
+			// 인포윈도우를 생성합니다
+			var infowindow = new kakao.maps.InfoWindow({
+				content: iwContent,
+				removable: iwRemoveable
+			});
+
+			// 인포윈도우를 마커위에 표시합니다 
+			infowindow.open(map, marker);
+
+			// 지도 중심좌표를 접속위치로 변경합니다
+			map.setCenter(locPosition);
+		}
+
+		// 지도에 도서관 마커를 생성 후 클릭시 이벤트 발생하게 만들어주는 함수
+		function displayLibMarker(locPosition, message, num) {
+
+			// 마커를 생성합니다
+			var marker = new kakao.maps.Marker({
+				map: map,
+				position: locPosition,
+			});
+
+			// 마커에 번호 속성 부여
+			marker.markerNum = num;
+
+			// 인포윈도우에 표시할 내용
+			var iwContent = message,
+				iwRemoveable = true;
+
+			// 인포윈도우를 생성합니다
+			var infowindow = new kakao.maps.InfoWindow({
+				content: iwContent
+			});
+
+			// 마커에 마우스오버 이벤트를 등록합니다
+			kakao.maps.event.addListener(marker, 'mouseover', function () {
+				// 마커에 마우스오버 이벤트가 발생하면 인포윈도우를 마커위에 표시합니다
+				infowindow.open(map, marker);
+			});
+
+			// 마커에 마우스아웃 이벤트를 등록합니다
+			kakao.maps.event.addListener(marker, 'mouseout', function () {
+				// 마커에 마우스아웃 이벤트가 발생하면 인포윈도우를 제거합니다
+				infowindow.close();
+			});
+
+			kakao.maps.event.addListener(marker, 'click', function () {
+				// 마커 위에 인포윈도우를 표시합니다
+				infowindow.open(map, marker);
+			});
+		}
+
+		// 도서관 api를 받아와서 지도상에 마커를 찍어주는 함수
+		// function displayLib(resDict) {
+		// 	var libNum = resDict.response.resultNum;
+		// 	var libDict = resDict.response.libs;
+		// 	var libTable = document.getElementById('libTable');
+		// 	for (var i = 0; i < libNum; i++) {
+		// 		var libPos = new kakao.maps.LatLng(libDict[i].lib.latitude, libDict[i].lib.longitude),
+		// 			libName = libDict[i].lib.libName;
+		// 		displayLibMarker(libPos, libName, i);
+		// 		var libRow = `<tr id="libRow${i}">
+		// 						<td class="fw-bold">${i + 1}</td>
+		// 						<td>${libName}</td>
+		// 						<td>${libDict[i].lib.address}</td>
+		// 						<td>${libDict[i].lib.tel}</td>
+		// 						<td><a href="${libDict[i].lib.homepage}" target="_blank">링크</a></td>
+		// 					</tr>`
+		// 		libTable.innerHTML += libRow;
+		// 	}
+		// }
+	
+	</script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+		crossorigin="anonymous"></script>
+</body>
+
+</html>

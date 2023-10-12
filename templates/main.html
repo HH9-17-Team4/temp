@@ -59,8 +59,9 @@
 					<div class="d-grid gap-2 d-md-flex justify-content-md-end">
 						<a href="{{ book.link }}" class="btn btn-primary me-md-2" role="button" target="_blank"
 							type="button">구매하기</a>
-						<a href="{{ book.link }}" class="btn btn-secondary me-md-2" role="button" target="_blank"
-							type="button">대여하기</a>
+						<!-- <a href="{{ url_for('loan', isbnCode=book.isbn13) }}" class="btn btn-secondary me-md-2" -->
+						<a href="{{ url_for('loan') }}" class="btn btn-secondary me-md-2"
+							role="button" target="_blank" type="button" id="loanBtn">대여하기</a>
 					</div>
 				</div>
 			</div>

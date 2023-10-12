@@ -1,10 +1,16 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import requests
 import os
 
 from flask_sqlalchemy import SQLAlchemy
+
+# API 인증키
+API_KEY_CODE_ALADIN = 'ttbgarry94571426002'
+API_KEY_CODE_LIB = 'e269317ce6c8a313d58e210bebd35514f8eab2c77b24e3d5f2ee65e593982b5b'
+# 한번에 불러올 수 있는 최대 도서관 갯수
+LIB_SIZE = 350
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
@@ -51,7 +57,7 @@ def main():
 
   # 구한 날짜로 해당 주의 베스트셀러 불러오기
   year, month, week = getDate(inputDate)
-  res = requests.get(f"https://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=ttbgarry94571426002&QueryType=Bestseller&MaxResults={numOfBook}&start=1&SearchTarget=Book&output=js&Year={year}&Month={month}&Week={week}&Version=20131101")
+  res = requests.get(f"https://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey={API_KEY_CODE_ALADIN}&QueryType=Bestseller&MaxResults={numOfBook}&start=1&SearchTarget=Book&output=js&Year={year}&Month={month}&Week={week}&Version=20131101")
   rjson = res.json()
   context = rjson['item']
   return render_template("main.html", data=context)
@@ -126,6 +132,12 @@ def map():
   }
   return render_template("map.html", data=context)
 
+# 지역코드와 ISBN13코드로 책을 보유중인 도서관 검색 (미구현)
+@app.route("/loan")
+def loan(isbnCode=9791192389325, regionCode=11):
+	# res = requests.get(f"http://data4library.kr/api/libSrchByBook?authKey={API_KEY_CODE_LIB}&isbn={isbnCode}&region={regionCode}&pageSize={LIB_SIZE}&format=json")
+	# rjson = res.json()
+	return render_template("loan.html")
 
 if __name__ == "__main__":
   app.run(debug=True)
