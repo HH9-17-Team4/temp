@@ -36,7 +36,7 @@ class MBTI(db.Model):
   mbti_type = db.Column(db.String(100), nullable=False)
   description = db.Column(db.String(10000), nullable=False)
   book = db.Column(db.String(100), nullable=False)
-
+  
 # 책 매장 검색 결과 DB
 class Store(db.Model):
   Id = db.Column(db.String(255), primary_key=True)
@@ -49,7 +49,7 @@ class Store(db.Model):
 with app.app_context():
   db.create_all()
 
-@app.route("/main")
+@app.route("/")
 def main():
   # 가져올 베스트셀러 권 수 (디폴트 4권)
   numOfBook = 4
@@ -121,22 +121,68 @@ def result():
   # 다음 질문이 있으면 진행, 아니면 MBTI 계산
   if next_question:
     return render_template("test.html", data=next_question)
+  else:
+    calculated_mbti = calculate_mbti()
+    answer = MBTI.query.filter_by(mbti_type=calculated_mbti).first()
 
-  calculated_mbti = calculate_mbti()
-  answer = MBTI.query.filter_by(mbti_type=calculated_mbti).first()
+  #calculated_mbti = calculate_mbti()
+  #description = c.execute('SELECT description FROM MBTI WHERE id = 1')
+  #book = MBTI.query.filter_by(mbti_type=calculated_mbti).get(book)
+  #image = MBTI.query.filter_by(mbti_type=calculated_mbti).get(image)
+  #for tr in trs:
+  #      rank = tr.select_one('.rank').text
+  #      title = tr.select_one('.rank01 > span > a').text
+  #      artist = tr.select_one('.rank02 > a').text
+  #      image = tr.select_one('img')['src']
+  #      melon_data.append({'rank': rank, 'artist': artist, 'title': title, 'image': image})
+  # 1. 테이블에 있는 쿼리를 스플릿 시킨다. => is not subscriptable
+  # 2. 쿼리에서 각각 데이터를 넣는다. =>
+  
+  def fetch_data_from_table(database_name, table_name):
+    try:
+      conn=sqlite3.connect(database_name)
 
-  book_info = answer.book.split(" : ")
-  book_name = book_info[0]
-  book_desc = book_info[1]
+      cursor =conn.cursor()
 
-  context = {
-    "mbti": calculated_mbti,
-    "desc": answer.description,
-    "book_name": book_name,
-    "book_desc": book_desc
-  }
+      sql_query=f"SELECT * FROM {table_name} WHERE mbti_type=calculated_mbti"
 
-  return render_template("result.html", data=context)
+      cursor.execute(sql_query)
+
+      rows = cursor.fetchall
+
+      cursor.close
+
+      conn.close
+
+      return rows
+    
+    except sqlite3.Error as e:
+      print("SQLite 에러 :",e)
+      return None
+    
+  database_name = 'database.db'
+  table_name = 'my_table'
+  table_data =fetch_data_from_table(database_name,table_name)
+
+  if table_data:
+    for column in table_data:
+      answers = [column]
+  else :
+    print("데이터를 가져올 수 없었습니다")
+
+  description = "SELECT description FROM 'MBTI' WHERE mbti_type=calculated_mbti"
+  book = "SELECT book FROM 'MBTI' WHERE mbti_type=calculated_mbti"
+  image = "SELECT image FROM 'MBTI' WHERE mbti_type=calculated_mbti"
+
+  #answers=[]
+  #answers.append[{"type":calculated_mbti, "description":description,"book":book,"image":image}]
+  """
+  # 책들이 다수라면 book에 , 기준으로 책 제목을 나열하는 등의 방식 사용
+  # books = [], books = answer.book.split({"type":answer[0],"description":answer[1],"book":answer[2],"image":answer[3]})"""
+  # 저장된 책의 제목을 이용해서
+  # 설명이나 다른 정보를 크롤링 정보랑 연결하면 될 듯 해요!
+
+  return render_template("result.html", data=answers)
 
 @app.route("/map")
 def map():
@@ -146,8 +192,10 @@ def map():
 
 @app.route("/map/store/")
 def map_store():
+    db.session.query(Store).delete()
+    db.session.commit()
     TTB_Key = 'ttbkjw12431355001'
-    Title = '혼자 공부하는 파이썬 - 1:1 과외하듯 배우는 프로그래밍 자습서, 개정판'
+    Title = '개미'
     URL = f'http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey={TTB_Key}&Query={Title}&QueryType=Title&MaxResults=3&start=1&SearchTarget=Book&output=xml&Version=20131101'
 
     # API로 데이터 불러오기
@@ -180,7 +228,7 @@ def map_store():
     title_receive = title
     price_receive = price
     offCode_receive = offCode
-    offName_receive = offName
+    offName_receive = '알라딘' + offName
     link_receive = link
     
     existing_store = Store.query.filter_by(Id=isbn_receive).first()
