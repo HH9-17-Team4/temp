@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from bs4 import BeautifulSoup
 import requests
 import os
 
@@ -28,10 +29,18 @@ class MBTI(db.Model):
   mbti_type = db.Column(db.String(100), nullable=False)
   description = db.Column(db.String(10000), nullable=False)
   book = db.Column(db.String(100), nullable=False)
+  
+# 책 매장 검색 결과 DB
+class Store(db.Model):
+  Id = db.Column(db.String(255), primary_key=True)
+  title = db.Column(db.String(255))
+  price = db.Column(db.String(255))
+  offCode = db.Column(db.String(255))
+  offName = db.Column(db.String(255))
+  link = db.Column(db.String(255))
 
 with app.app_context():
   db.create_all()
-
 
 @app.route("/main")
 def main():
@@ -113,19 +122,72 @@ def answer():
 
 @app.route("/result")
 def result():
-  context = {
-
-  }
-  return render_template("result.html", data=context)
+  mbti_res = MBTI.query.all()
+  return render_template("result.html", data=mbti_res)
 
 
 @app.route("/map")
 def map():
-  context = {
+    store = Store.query.all()
 
-  }
-  return render_template("map.html", data=context)
+    return render_template("map.html", data=store)
 
+@app.route("/map/store/")
+def map_store():
+    TTB_Key = 'ttbkjw12431355001'
+    Title = '혼자 공부하는 파이썬 - 1:1 과외하듯 배우는 프로그래밍 자습서, 개정판'
+    URL = f'http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey={TTB_Key}&Query={Title}&QueryType=Title&MaxResults=3&start=1&SearchTarget=Book&output=xml&Version=20131101'
+
+    # API로 데이터 불러오기
+    rq = requests.get(URL)
+    soup = BeautifulSoup(rq.text, 'xml')
+
+    isbn = ""
+    title = ""
+    price = ""
+
+    for item in soup.find_all('item'):
+        isbn = item.find('isbn').text
+        title = item.find('title').text
+        price = item.find('priceSales').text
+
+    URL2 = f'http://www.aladin.co.kr/ttb/api/ItemOffStoreList.aspx?ttbkey={TTB_Key}&itemIdType=ISBN&ItemId={isbn}&output=xml'
+    rq2 = requests.get(URL2)
+    soup2 = BeautifulSoup(rq2.text, 'xml')
+
+    offStoreInfo_elements = soup2.find_all('offStoreInfo')
+
+    for offStoreInfo in offStoreInfo_elements:
+        offCode = offStoreInfo.find('offCode').text
+        offName = offStoreInfo.find('offName').text
+        link = offStoreInfo.find('link').text
+
+    # 데이터를 DB에 저장하기
+    # 수정된 부분: request.args를 사용하여 데이터 받기
+    isbn_receive = isbn
+    title_receive = title
+    price_receive = price
+    offCode_receive = offCode
+    offName_receive = offName
+    link_receive = link
+    
+    existing_store = Store.query.filter_by(Id=isbn_receive).first()
+    if existing_store:
+    # 이미 존재하는 레코드가 있는 경우 업데이트
+      existing_store.title = title_receive
+      existing_store.price = price_receive
+      existing_store.offCode = offCode_receive
+      existing_store.offName = offName_receive
+      existing_store.link = link_receive
+    else:
+    # 새로운 레코드 추가
+      stor = Store(Id=isbn_receive, title=title_receive, price=price_receive, offCode=offCode_receive, offName=offName_receive, link=link_receive)
+      db.session.add(stor)
+
+    db.session.commit()
+    
+
+    return redirect(url_for('map'))  # 수정된 부분: url_for() 인자 수정
 
 if __name__ == "__main__":
   app.run(debug=True)
