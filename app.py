@@ -135,7 +135,6 @@ def result():
     "book_name": book_name,
     "book_desc": book_desc
   }
-
   return render_template("result.html", data=context)
 
 @app.route("/map")
@@ -144,12 +143,12 @@ def map():
 
     return render_template("map.html", data=store)
 
-@app.route("/map/store/")
+@app.route("/map/store/", methods=["POST"])
 def map_store():
     db.session.query(Store).delete()
     db.session.commit()
     TTB_Key = 'ttbkjw12431355001'
-    Title = '개미'
+    Title = request.form['book_title']
     URL = f'http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey={TTB_Key}&Query={Title}&QueryType=Title&MaxResults=3&start=1&SearchTarget=Book&output=xml&Version=20131101'
 
     # API로 데이터 불러오기

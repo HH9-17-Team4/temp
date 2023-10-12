@@ -43,7 +43,10 @@
       <p>님 MBTI에 대한 설명은 : {{ data.desc }}</p>
       <p>님에게 추천해줄 책 : {{ data.book_name }}</p>
       <p>이 책은 말야 : {{ data.book_desc }}</p>
-      <a href="{{ url_for('map_store') }}">재고보러가자</a>
+      <form action="{{ url_for('map_store') }}" method="post">
+        <input type="hidden" name="book_title" value="{{ data.book_name }}" />
+        <button type="submit">재고보러가자</button>
+      </form>
     </div>
   </body>
 </html>
