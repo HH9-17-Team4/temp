@@ -104,7 +104,7 @@
         <span>내 MBTI와 찰떡인 책은?</span>
         책BTI 알아보기🔍
       </h1>
-      <form class="test-form" action="{{ url_for('answer') }}" method="post">
+      <form class="test-form" action="{{ url_for('result') }}" method="post">
         <h2 class="question">Q. {{ data.title }}</h2>
         <input type="hidden" name="question_id" value="{{ data.id }}" />
         <input

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from bs4 import BeautifulSoup
@@ -6,6 +6,13 @@ import requests
 import os
 
 from flask_sqlalchemy import SQLAlchemy
+
+# API 인증키
+API_KEY_CODE_ALADIN = 'ttbgarry94571426002'
+API_KEY_CODE_LIB = 'e269317ce6c8a313d58e210bebd35514f8eab2c77b24e3d5f2ee65e593982b5b'
+# 한번에 불러올 수 있는 최대 도서관 갯수
+LIB_SIZE = 350
+
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
@@ -60,7 +67,7 @@ def main():
 
   # 구한 날짜로 해당 주의 베스트셀러 불러오기
   year, month, week = getDate(inputDate)
-  res = requests.get(f"https://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=ttbgarry94571426002&QueryType=Bestseller&MaxResults={numOfBook}&start=1&SearchTarget=Book&output=js&Year={year}&Month={month}&Week={week}&Version=20131101")
+  res = requests.get(f"https://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey={API_KEY_CODE_ALADIN}&QueryType=Bestseller&MaxResults={numOfBook}&start=1&SearchTarget=Book&output=js&Year={year}&Month={month}&Week={week}&Version=20131101")
   rjson = res.json()
   context = rjson['item']
   return render_template("main.html", data=context)
@@ -114,7 +121,6 @@ def result():
   # 다음 질문이 있으면 진행, 아니면 MBTI 계산
   if next_question:
     return render_template("test.html", data=next_question)
-  
   else:
     calculated_mbti = calculate_mbti()
     answer = MBTI.query.filter_by(mbti_type=calculated_mbti).first()
@@ -178,35 +184,6 @@ def result():
 
   return render_template("result.html", data=answers)
 
-@app.route("/answer", methods=["POST"])
-def answer():
-  question_id = request.form['question_id']
-  selected_option = request.form['option']  # 선택된 옵션 (A 또는 B)
-  question = Question.query.get(question_id)
-
-  # 사용자의 선택에 따라 answer 값을 저장
-  if selected_option == 'A':
-    question.answer = -1
-  elif selected_option == 'B':
-    question.answer = 1
-  db.session.commit() # DB에 저장
-
-  # 다음 질문 가져오기 (id값 대조)
-  next_question = Question.query.filter(Question.id > question.id).first()
-  # 다음 질문이 있으면 진행, 아니면 MBTI 계산
-  if next_question:
-    return render_template("test.html", data=next_question)
-  else:
-    calculated_mbti = calculate_mbti()
-    answer = MBTI.query.filter_by(mbti_type=calculated_mbti).first()
-    return render_template("answer.html", data=answer)
-
-@app.route("/result")
-def result():
-  mbti_res = MBTI.query.all()
-  return render_template("result.html", data=mbti_res)
-
-
 @app.route("/map")
 def map():
     store = Store.query.all()
@@ -266,9 +243,15 @@ def map_store():
       db.session.add(stor)
 
     db.session.commit()
-    
 
     return redirect(url_for('map'))  # 수정된 부분: url_for() 인자 수정
+
+# 지역코드와 ISBN13코드로 책을 보유중인 도서관 검색 (미구현)
+@app.route("/loan")
+def loan(isbnCode=9791192389325, regionCode=11):
+	# res = requests.get(f"http://data4library.kr/api/libSrchByBook?authKey={API_KEY_CODE_LIB}&isbn={isbnCode}&region={regionCode}&pageSize={LIB_SIZE}&format=json")
+	# rjson = res.json()
+	return render_template("loan.html")
 
 if __name__ == "__main__":
   app.run(debug=True)
