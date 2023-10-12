@@ -96,6 +96,88 @@ def test():
   question = Question.query.first()
   return render_template("test.html", data=question)
 
+@app.route("/result", methods=["POST"])
+def result():
+  question_id = request.form['question_id']
+  selected_option = request.form['option']  # 선택된 옵션 (A 또는 B)
+  question = Question.query.get(question_id)
+
+  # 사용자의 선택에 따라 answer 값을 저장
+  if selected_option == 'A':
+    question.answer = -1
+  elif selected_option == 'B':
+    question.answer = 1
+  db.session.commit() # DB에 저장
+
+  # 다음 질문 가져오기 (id값 대조)
+  next_question = Question.query.filter(Question.id > question.id).first()
+  # 다음 질문이 있으면 진행, 아니면 MBTI 계산
+  if next_question:
+    return render_template("test.html", data=next_question)
+  
+  else:
+    calculated_mbti = calculate_mbti()
+    answer = MBTI.query.filter_by(mbti_type=calculated_mbti).first()
+
+  #calculated_mbti = calculate_mbti()
+  #description = c.execute('SELECT description FROM MBTI WHERE id = 1')
+  #book = MBTI.query.filter_by(mbti_type=calculated_mbti).get(book)
+  #image = MBTI.query.filter_by(mbti_type=calculated_mbti).get(image)
+  #for tr in trs:
+  #      rank = tr.select_one('.rank').text
+  #      title = tr.select_one('.rank01 > span > a').text
+  #      artist = tr.select_one('.rank02 > a').text
+  #      image = tr.select_one('img')['src']
+  #      melon_data.append({'rank': rank, 'artist': artist, 'title': title, 'image': image})
+  # 1. 테이블에 있는 쿼리를 스플릿 시킨다. => is not subscriptable
+  # 2. 쿼리에서 각각 데이터를 넣는다. =>
+  
+  def fetch_data_from_table(database_name, table_name):
+    try:
+      conn=sqlite3.connect(database_name)
+
+      cursor =conn.cursor()
+
+      sql_query=f"SELECT * FROM {table_name} WHERE mbti_type=calculated_mbti"
+
+      cursor.execute(sql_query)
+
+      rows = cursor.fetchall
+
+      cursor.close
+
+      conn.close
+
+      return rows
+    
+    except sqlite3.Error as e:
+      print("SQLite 에러 :",e)
+      return None
+    
+  database_name = 'database.db'
+  table_name = 'my_table'
+  table_data =fetch_data_from_table(database_name,table_name)
+
+  if table_data:
+    for column in table_data:
+      answers = [column]
+  else :
+    print("데이터를 가져올 수 없었습니다")
+
+  description = "SELECT description FROM 'MBTI' WHERE mbti_type=calculated_mbti"
+  book = "SELECT book FROM 'MBTI' WHERE mbti_type=calculated_mbti"
+  image = "SELECT image FROM 'MBTI' WHERE mbti_type=calculated_mbti"
+
+  #answers=[]
+  #answers.append[{"type":calculated_mbti, "description":description,"book":book,"image":image}]
+  """
+  # 책들이 다수라면 book에 , 기준으로 책 제목을 나열하는 등의 방식 사용
+  # books = [], books = answer.book.split({"type":answer[0],"description":answer[1],"book":answer[2],"image":answer[3]})"""
+  # 저장된 책의 제목을 이용해서
+  # 설명이나 다른 정보를 크롤링 정보랑 연결하면 될 듯 해요!
+
+  return render_template("result.html", data=answers)
+
 @app.route("/answer", methods=["POST"])
 def answer():
   question_id = request.form['question_id']
