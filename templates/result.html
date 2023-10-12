@@ -1,64 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>테스트 결과</title>
     <style>
-        .content {
-            max-width: 600px;
-            margin: auto;
-        }
+      .content {
+        max-width: 600px;
+        margin: auto;
+      }
 
-        .img {
-            width: 150px;
-            height: 200px;
-        }
+      .img {
+        width: 150px;
+        height: 200px;
+      }
 
-        .title {
-            text-align: center;
-        }
+      .title {
+        text-align: center;
+      }
 
-        .contents {
-            text-align: center;
-        }
+      .contents {
+        text-align: center;
+      }
 
-        .button-container {
-            text-align: center;
-            display: inline-block;
-            display: flex;
+      .button-container {
+        text-align: center;
+        display: inline-block;
+        display: flex;
+      }
 
-        }
-
-        .btn {
-            justify-content: center;
-            align-items: center;
-            background-color: lightblue;
-            color: black;
-            padding: 15px 25px;
-            margin: 50px;
-            width: 200px;
-            height: 75px;
-        }
+      .btn {
+        justify-content: center;
+        align-items: center;
+        background-color: lightblue;
+        color: black;
+        padding: 15px 25px;
+        margin: 50px;
+        width: 200px;
+        height: 75px;
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <div class="content">
-        {% for survey in data %}
-        <!--MBTI 결과 / MBTI 기본문 / 책 제목 / 책 소개-->
-        <ul class="book_page">
-            <h1 class = "mbti-result" id="mbti">MBTI 결과 : {{survey.type}}</h1>
-            <h3 class = "mbti-description" id="description">{{survey.type}}인 당신, 그런 당신을 위해 책을 몇 권 추천해드리겠습니다.</h3>
-            <img id="foo" src="{{survey.image}}" alt="book_cover">
-            <div class="book-body">
-                <p class="book-title" id="title"><strong>{{survey.book}}</strong></p>
-                <p class="book-contents" id="contents">{{survey.description}}</p>
-            </div>
-        </ul>
-        {% endfor %}
+      {% for survey in data %}
+      <!--MBTI 결과 / MBTI 기본문 / 책 제목 / 책 소개-->
+      <ul class="book_page">
+        <h1 class="mbti-result" id="mbti">MBTI 결과 : {{ survey.type }}</h1>
+        <h3 class="mbti-description" id="description">
+          {{survey.type}}인 당신, 그런 당신을 위해 책을 몇 권
+          추천해드리겠습니다.
+        </h3>
+        <img id="foo" src="{{survey.image}}" alt="book_cover" />
+        <div class="book-body">
+          <p class="book-title" id="title"><strong>{{survey.book}}</strong></p>
+          <p class="book-contents" id="contents">{{survey.description}}</p>
+        </div>
+      </ul>
+      {% endfor %}
     </div>
-</body>
-
+  </body>
 </html>
