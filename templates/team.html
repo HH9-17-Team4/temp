@@ -1,9 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-  </head>
-  <body></body>
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Meet the members!</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+</head>
+
+<body>
+	<!-- 네비게이션 바 -->
+	<nav class="navbar navbar-expand-lg bg-body-tertiary d-flex justify-content-between" data-bs-theme="dark">
+		<div class="container-fluid">
+			<a class="navbar-brand" href="{{ url_for('main') }}">BookBTI</a>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+				aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+				<ul class="navbar-nav">
+					<li class="nav-item">
+						<a class="nav-link active" aria-current="page" href="{{ url_for('main') }}">Home</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="question.html">BookBTI</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="{{ url_for('team') }}">Team</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<!-- 팀원 소개 -->
+	<div class="container text-center pt-5">
+		<div class="row mb-5">
+			<h1 class="display-1 text-center">BookBTI!</h1>
+			<p class="display-5 text-center">Meet the members!</p>
+		</div>
+		<div class="row">
+			<div class="col">
+				<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwS91RLAvI5CIDhbCTtr4E3Q6inYEEfME9WqWJaIUyVDKJyqanxSaa8mRvnwozhU47bVE&usqp=CAU"
+					alt="이현범" width="225px" height="225px">
+				<h2>이현범</h2>
+				<h2>ENFJ</h2>
+			</div>
+			<div class="col">
+				<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcToeLKgJbSDd2ENfPoTxh6NZURLWzhp9BoaW9vHz2CrhqsZNacvCoXKS4WchsyM4kF0bsY&usqp=CAU"
+					alt="이성령">
+				<h2>이성령</h2>
+				<h2>ISFJ</h2>
+			</div>
+			<div class="col">
+				<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcToeLKgJbSDd2ENfPoTxh6NZURLWzhp9BoaW9vHz2CrhqsZNacvCoXKS4WchsyM4kF0bsY&usqp=CAU"
+					alt="강요셉">
+				<h2>강요셉</h2>
+				<h2>ISTP</h2>
+			</div>
+		</div>
+		<div class="row justify-content-center">
+			<div class="col">
+				<a class="btn btn-link" href="map.html" role="button">주변 도서관 안내 페이지</a>
+			</div>
+			<div class="col">
+				<a class="btn btn-link" href="map.html" role="button">주변 도서관 안내 페이지</a>
+			</div>
+			<div class="col">
+				<a class="btn btn-link" href="result.html" role="button">테스트 결과 페이지</a>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col">
+				<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcToeLKgJbSDd2ENfPoTxh6NZURLWzhp9BoaW9vHz2CrhqsZNacvCoXKS4WchsyM4kF0bsY&usqp=CAU"
+					alt="김대환">
+				<h2>김대환</h2>
+				<h2>INTJ</h2>
+			</div>
+			<div class="col">
+				<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcToeLKgJbSDd2ENfPoTxh6NZURLWzhp9BoaW9vHz2CrhqsZNacvCoXKS4WchsyM4kF0bsY&usqp=CAU"
+					alt="이진서">
+				<h2>이진서</h2>
+				<h2>INTP</h2>
+			</div>
+			<div class="col">
+				<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcToeLKgJbSDd2ENfPoTxh6NZURLWzhp9BoaW9vHz2CrhqsZNacvCoXKS4WchsyM4kF0bsY&usqp=CAU"
+					alt="류시영">
+				<h2>류시영</h2>
+				<h2>INTP</h2>
+			</div>
+		</div>
+		<div class="row justify-content-center">
+			<div class="col">
+				<a class="btn btn-link" href="result.html" role="button">테스트 결과 페이지</a>
+			</div>
+			<div class="col">
+				<a class="btn btn-link" href="main.html" role="button">메인 페이지</a>
+			</div>
+			<div class="col">
+				<a class="btn btn-link" href="main.html" role="button">메인 페이지</a>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+		crossorigin="anonymous"></script>
+</body>
+
 </html>

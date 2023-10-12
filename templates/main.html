@@ -1,10 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <style></style>
-  </head>
-  <body></body>
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Home</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+</head>
+
+<body>
+	<!-- 네비게이션 바 -->
+	<nav class="navbar navbar-expand-lg bg-body-tertiary d-flex justify-content-between" data-bs-theme="dark">
+		<div class="container-fluid">
+			<a class="navbar-brand" href="{{ url_for('main') }}">BookBTI</a>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+				aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+				<ul class="navbar-nav">
+					<li class="nav-item">
+						<a class="nav-link active" aria-current="page" href="{{ url_for('main') }}">Home</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="question.html">BookBTI</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="{{ url_for('team') }}">Team</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<!-- 제목과 로고이미지 -->
+	<div class="container pt-5 mb-5">
+		<h1 class="display-1 text-center">Welcome to BookBTI!</h1>
+		<p class="display-5 text-center">당신에게 맞는 퍼스널 책을 찾아보세요</p>
+		<img src="https://us.123rf.com/450wm/z0w/z0w1707/z0w170700162/83153177-%EC%B1%85-%EA%B8%B0%ED%98%B8-%EA%B7%B8%EB%A6%BC%EC%9D%98-%EC%8A%A4%ED%83%9D%EC%9E%85%EB%8B%88%EB%8B%A4-%EB%B2%A1%ED%84%B0-%ED%9D%B0%EC%83%89-%EB%B0%B0%EA%B2%BD%EC%97%90-%EA%B2%80%EC%A0%95-%EC%95%84%EC%9D%B4%EC%BD%98.jpg?ver=6"
+			class="rounded mx-auto d-block" alt="Image">
+		<div class="d-grid gap-2 col-6 mx-auto">
+			<button type="button" class="btn btn-dark btn-lg" href="question.html">추천 받으러 가기</button>
+		</div>
+	</div>
+
+	<!-- 오늘의 추천 책 -->
+	<div class="container p-3">
+		<h2 class="text-center fw-bold">오늘의 추천 책</h2>
+		<div class="card-group">
+			{% for book in data %}
+			<div class="card">
+				<img src="{{ book.cover }}" class="rounded mx-auto d-block mt-1" alt="Book {{ book.bestRank }}">
+				<div class="card-body">
+					<h5 class="card-title fw-bold">#{{ book.bestRank }} {{ book.title }}</h5>
+					<p class="card-text">{{ book.description }}</p>
+					<p class="card-text"><small class="text-body-secondary">{{ book.author }}</small></p>
+					<div class="d-grid gap-2 d-md-flex justify-content-md-end">
+						<a href="{{ book.link }}" class="btn btn-primary me-md-2" role="button" target="_blank"
+							type="button">구매하기</a>
+						<a href="{{ book.link }}" class="btn btn-secondary me-md-2" role="button" target="_blank"
+							type="button">대여하기</a>
+					</div>
+				</div>
+			</div>
+			{% endfor %}
+		</div>
+	</div>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+		crossorigin="anonymous"></script>
+</body>
+
 </html>
