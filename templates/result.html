@@ -46,11 +46,11 @@
 
 <body>
     <div class="content">
-        {% for survey in data %}
+        {% for survey in mbti_res %}
         <!--MBTI 결과 / MBTI 기본문 / 책 제목 / 책 소개-->
         <ul class="book_page">
-            <h1 class = "mbti-result" id="mbti">MBTI 결과 : {{survey.type}}</h1>
-            <h3 class = "mbti-description" id="description">{{survey.type}}인 당신, 그런 당신을 위해 책을 몇 권 추천해드리겠습니다.</h3>
+            <h1 class = "mbti-result" id="mbti">MBTI 결과 : {{survey.mbti_type}}</h1>
+            <h3 class = "mbti-description" id="description">{{survey.mbti_type}}인 당신, 그런 당신을 위해 책을 몇 권 추천해드리겠습니다.</h3>
             <img id="foo" src="{{survey.image}}" alt="book_cover">
             <div class="book-body">
                 <p class="book-title" id="title"><strong>{{survey.book}}</strong></p>
