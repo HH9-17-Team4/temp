@@ -39,6 +39,16 @@ class Store(db.Model):
   offName = db.Column(db.String(255))
   link = db.Column(db.String(255))
 
+# 책 리뷰 DB
+class Review(db.Model):
+  id = db.Column(db.Integer, primary_key=True)
+  userName = db.Column(db.String(255), nullable=False)
+  bookIsbn = db.Column(db.String(20), nullable=False)
+  bookTitle = db.Column(db.String(255), nullable=False)
+  bookScore = db.Column(db.Integer, nullable=False)
+  bookReview = db.Column(db.String(255))
+
+
 with app.app_context():
   db.create_all()
 
@@ -187,6 +197,39 @@ def map_store():
     
 
     return redirect(url_for('map'))  # 수정된 부분: url_for() 인자 수정
+
+# 책 대여 페이지로 이동
+@app.route('/loan')
+def loan():
+  return render_template('loan.html')
+
+# 리뷰 작성 페이지
+@app.route('/review/write/')
+def review_write():
+  # form에서 보낸 데이터 수신
+  idReceive = request.args.get("id")
+  userNameReceive = request.args.get("userName")
+  isbnReceive = request.args.get("bookIsbn")
+  titleReceive = request.args.get("bookTitle")
+  scoreReceive = request.args.get("bookScore")
+  reviewReceive = request.args.get("bookReview")
+
+  # db에 저장
+  data = Review(id=idReceive, userName=userNameReceive, bookIsbn=isbnReceive, bookTitle=titleReceive, bookScore=scoreReceive, bookReview=reviewReceive)
+  db.session.add(data)
+  db.session.commit()
+  return redirect(url_for('review_filter'), bookIsbn=isbnReceive)
+
+# 리뷰 페이지
+@app.route('/review')
+def review():
+  reviewList = Review.query.all()
+  return render_template('review.html', data=reviewList)
+
+@app.route('/review/<bookCode>/')
+def review_filter(bookIsbn):
+  filteredList = Review.query.filter_by(bookIsbn=bookIsbn).all()
+  return render_template('review.html', data=filteredList)
 
 if __name__ == "__main__":
   app.run(debug=True)
