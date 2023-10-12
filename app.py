@@ -21,7 +21,7 @@ class Question(db.Model):
   choose_type = db.Column(db.String(2))
   option_A = db.Column(db.String(255))
   option_B = db.Column(db.String(255))
-  answer = db.Column(db.Integer)
+  answer = db.Column(db.Integer, default=0)
 
 # MBTI 검사 결과 DB
 class MBTI(db.Model):
@@ -71,23 +71,23 @@ def team():
 
 # MBTI 결과 계산 함수
 def calculate_mbti():
-  types = {}  # 각 choose_type에 대한 누적 점수를 저장할 딕셔너리
+  # 각 choose_type에 대한 누적 점수를 딕셔너리에 저장
+  types = {'EI': 0, 'SN': 0, 'TF': 0, 'JP': 0}
   questions = Question.query.all()
 
   # 모든 질문에 대해 choose_type에 따라 누적 점수 계산
   for question in questions:
-    if question.choose_type not in types:
-      types[question.choose_type] = 0
     types[question.choose_type] += question.answer
 
-  # 각 choose_type의 누적 점수가 양수면 두 번째 글자를 사용, 음수면 첫 번째 글자 사용
+  # 각 choose_type의 누적 점수가
+  # 음수면 첫 번째 글자, 양수면 두 번째 글자를 사용 (ex. NS -> N / S)
+  # types의 길이만큼 4번 반복해서 MBTI 문자열 완성
   mbti_result = ""
-  for choose_type, score in types.items():
-    if score >= 0:
+  for choose_type in types.keys():
+    if types[choose_type] >= 0:
       mbti_result += choose_type[1]
     else:
       mbti_result += choose_type[0]
-
   return mbti_result
 
 @app.route("/test")
@@ -107,18 +107,17 @@ def answer():
     question.answer = -1
   elif selected_option == 'B':
     question.answer = 1
-  db.session.commit()
+  db.session.commit() # DB에 저장
 
   # 다음 질문 가져오기 (id값 대조)
   next_question = Question.query.filter(Question.id > question.id).first()
   # 다음 질문이 있으면 진행, 아니면 MBTI 계산
   if next_question:
-    return render_template('test.html', data=next_question)
+    return render_template("test.html", data=next_question)
   else:
     calculated_mbti = calculate_mbti()
     answer = MBTI.query.filter_by(mbti_type=calculated_mbti).first()
     return render_template("answer.html", data=answer)
-
 
 @app.route("/result")
 def result():
