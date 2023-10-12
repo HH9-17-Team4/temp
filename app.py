@@ -56,6 +56,9 @@ def main():
   context = rjson['item']
   return render_template("main.html", data=context)
 
+@app.route("/team")
+def team():
+  return render_template("team.html")
 
 # MBTI 결과 계산 함수
 def calculate_mbti():
