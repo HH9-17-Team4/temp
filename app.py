@@ -1,9 +1,27 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
+from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-import requests
 import json
+import requests
+import os
 
+from flask_sqlalchemy import SQLAlchemy
+
+basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] =\
+  'sqlite:///' + os.path.join(basedir, 'database.db')
+
+db = SQLAlchemy(app)
+
+class MBTI(db.Model):
+  id = db.Column(db.Integer, primary_key=True)
+  type = db.Column(db.String(100), nullable=False)
+  description = db.Column(db.String(10000), nullable=False)
+  book = db.Column(db.String(100), nullable=False)
+
+with app.app_context():
+    db.create_all()
 
 
 @app.route("/main")
@@ -36,7 +54,7 @@ def team():
   }
   return render_template("team.html", data=context)
 
-@app.route("/question/<number>")
+@app.route("/question/")
 def question():
   context = {
 
