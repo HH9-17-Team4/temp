@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from bs4 import BeautifulSoup
@@ -6,6 +6,13 @@ import requests
 import os
 
 from flask_sqlalchemy import SQLAlchemy
+
+# API 인증키
+API_KEY_CODE_ALADIN = 'ttbgarry94571426002'
+API_KEY_CODE_LIB = 'e269317ce6c8a313d58e210bebd35514f8eab2c77b24e3d5f2ee65e593982b5b'
+# 한번에 불러올 수 있는 최대 도서관 갯수
+LIB_SIZE = 350
+
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
@@ -39,20 +46,10 @@ class Store(db.Model):
   offName = db.Column(db.String(255))
   link = db.Column(db.String(255))
 
-# 책 리뷰 DB
-class Review(db.Model):
-  id = db.Column(db.Integer, primary_key=True)
-  userName = db.Column(db.String(255), nullable=False)
-  bookIsbn = db.Column(db.String(20), nullable=False)
-  bookTitle = db.Column(db.String(255), nullable=False)
-  bookScore = db.Column(db.Integer, nullable=False)
-  bookReview = db.Column(db.String(255))
-
-
 with app.app_context():
   db.create_all()
 
-@app.route("/main")
+@app.route("/")
 def main():
   # 가져올 베스트셀러 권 수 (디폴트 4권)
   numOfBook = 4
@@ -70,7 +67,7 @@ def main():
 
   # 구한 날짜로 해당 주의 베스트셀러 불러오기
   year, month, week = getDate(inputDate)
-  res = requests.get(f"https://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=ttbgarry94571426002&QueryType=Bestseller&MaxResults={numOfBook}&start=1&SearchTarget=Book&output=js&Year={year}&Month={month}&Week={week}&Version=20131101")
+  res = requests.get(f"https://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey={API_KEY_CODE_ALADIN}&QueryType=Bestseller&MaxResults={numOfBook}&start=1&SearchTarget=Book&output=js&Year={year}&Month={month}&Week={week}&Version=20131101")
   rjson = res.json()
   context = rjson['item']
   return render_template("main.html", data=context)
@@ -106,8 +103,8 @@ def test():
   question = Question.query.first()
   return render_template("test.html", data=question)
 
-@app.route("/answer", methods=["POST"])
-def answer():
+@app.route("/result", methods=["POST"])
+def result():
   question_id = request.form['question_id']
   selected_option = request.form['option']  # 선택된 옵션 (A 또는 B)
   question = Question.query.get(question_id)
@@ -124,16 +121,22 @@ def answer():
   # 다음 질문이 있으면 진행, 아니면 MBTI 계산
   if next_question:
     return render_template("test.html", data=next_question)
-  else:
-    calculated_mbti = calculate_mbti()
-    answer = MBTI.query.filter_by(mbti_type=calculated_mbti).first()
-    return render_template("answer.html", data=answer)
 
-@app.route("/result")
-def result():
-  mbti_res = MBTI.query.all()
-  return render_template("result.html", data=mbti_res)
+  calculated_mbti = calculate_mbti()
+  answer = MBTI.query.filter_by(mbti_type=calculated_mbti).first()
 
+  book_info = answer.book.split(" : ")
+  book_name = book_info[0]
+  book_desc = book_info[1]
+
+  context = {
+    "mbti": calculated_mbti,
+    "desc": answer.description,
+    "book_name": book_name,
+    "book_desc": book_desc
+  }
+
+  return render_template("result.html", data=context)
 
 @app.route("/map")
 def map():
@@ -143,8 +146,10 @@ def map():
 
 @app.route("/map/store/")
 def map_store():
+    db.session.query(Store).delete()
+    db.session.commit()
     TTB_Key = 'ttbkjw12431355001'
-    Title = '혼자 공부하는 파이썬 - 1:1 과외하듯 배우는 프로그래밍 자습서, 개정판'
+    Title = '개미'
     URL = f'http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey={TTB_Key}&Query={Title}&QueryType=Title&MaxResults=3&start=1&SearchTarget=Book&output=xml&Version=20131101'
 
     # API로 데이터 불러오기
@@ -177,7 +182,7 @@ def map_store():
     title_receive = title
     price_receive = price
     offCode_receive = offCode
-    offName_receive = offName
+    offName_receive = '알라딘' + offName
     link_receive = link
     
     existing_store = Store.query.filter_by(Id=isbn_receive).first()
@@ -194,42 +199,15 @@ def map_store():
       db.session.add(stor)
 
     db.session.commit()
-    
 
     return redirect(url_for('map'))  # 수정된 부분: url_for() 인자 수정
 
-# 책 대여 페이지로 이동
-@app.route('/loan')
-def loan():
-  return render_template('loan.html')
-
-# 리뷰 작성 페이지
-@app.route('/review/write/')
-def review_write():
-  # form에서 보낸 데이터 수신
-  idReceive = request.args.get("id")
-  userNameReceive = request.args.get("userName")
-  isbnReceive = request.args.get("bookIsbn")
-  titleReceive = request.args.get("bookTitle")
-  scoreReceive = request.args.get("bookScore")
-  reviewReceive = request.args.get("bookReview")
-
-  # db에 저장
-  data = Review(id=idReceive, userName=userNameReceive, bookIsbn=isbnReceive, bookTitle=titleReceive, bookScore=scoreReceive, bookReview=reviewReceive)
-  db.session.add(data)
-  db.session.commit()
-  return redirect(url_for('review_filter'), bookIsbn=isbnReceive)
-
-# 리뷰 페이지
-@app.route('/review')
-def review():
-  reviewList = Review.query.all()
-  return render_template('review.html', data=reviewList)
-
-@app.route('/review/<bookCode>/')
-def review_filter(bookIsbn):
-  filteredList = Review.query.filter_by(bookIsbn=bookIsbn).all()
-  return render_template('review.html', data=filteredList)
+# 지역코드와 ISBN13코드로 책을 보유중인 도서관 검색 (미구현)
+@app.route("/loan")
+def loan(isbnCode=9791192389325, regionCode=11):
+	# res = requests.get(f"http://data4library.kr/api/libSrchByBook?authKey={API_KEY_CODE_LIB}&isbn={isbnCode}&region={regionCode}&pageSize={LIB_SIZE}&format=json")
+	# rjson = res.json()
+	return render_template("loan.html")
 
 if __name__ == "__main__":
   app.run(debug=True)
