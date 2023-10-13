@@ -46,8 +46,19 @@
 		</div>
 	</nav>
 
+	<!-- 제목 -->
+	<div class="container text-center pt-5">
+		<div class="row mb-5">
+			<h1 class="display-1 text-center">리뷰 작성하기</h1>
+			<p class="display-5 text-center">100자 이내의 감상평을 남겨주세요!</p>
+		</div>
+	</div>
+
 	<div class="container pt-5 mb-5">
 		<form action="{{ url_for('review_write') }}" method="get">
+			<input type="hidden" name="id" value="{{ id }}">
+			<input type="hidden" name="bookIsbn" value="{{ bookData.bookIsbn }}">
+			<input type="hidden" name="bookTitle" value="{{ bookData.bookTitle }}">
 			<div class="mb-3 d-flex justify-content-evenly">
 				<div class="flex-fill m-1">
 					<label for="exampleFormControlInput1" class="form-label">이름</label>
@@ -63,9 +74,6 @@
 				<label for="exampleFormControlTextarea1" class="form-label">책 리뷰</label>
 				<textarea class="form-control" name="bookReview" rows="3"></textarea>
 			</div>
-			<input type="hidden" name="id" value="{{ id }}">
-			<input type="hidden" name="bookIsbn" value="{{ bookData.bookIsbn }}">
-			<input type="hidden" name="bookTitle" value="{{ bookData.bookTitle }}">
 			<div class="container d-flex justify-content-end">
 				<button type="submit" class="btn btn-primary">글쓰기</button>
 			</div>
@@ -76,44 +84,109 @@
 		<table class="table table-striped-columns">
 			<thead>
 				<tr>
-					<th class="col-1" scope="col">ID</th>
-					<th class="col-1" scope="col">유저 이름</th>
-					<th class="col-2" scope="col">책 이름</th>
-					<th class="col-8" scope="col">책 리뷰</th>
+					<th class="col-1 text-center" scope="col">ID</th>
+					<th class="col-1 text-center" scope="col">유저 이름</th>
+					<th class="col-2 text-center" scope="col">책 이름</th>
+					<th class="col-6 text-center" scope="col">책 리뷰</th>
+					<th class="col-1 text-center" scope="col">작성일</th>
+					<th class="col-1" scope="col"></th>
 				</tr>
 			</thead>
 			<tbody>
 				{% for review in filteredData %}
 				<tr>
-					<th scope="row">{{ review.id }}</th>
-					<td>{{ review.userName }}</td>
+					<th class="text-center" scope="row">{{ review.id }}</th>
+					<td class="text-center">{{ review.userName }}</td>
 					<td>{{ review.bookTitle }}</td>
 					<td>{{ review.bookReview }}</td>
+					<td class="text-center">{{ review.time }}</td>
+					<td class="text-center">
+						<button type="button" class="btn btn-link" data-bs-toggle="modal"
+							data-bs-target="#exampleModal{{ loop.index }}">
+							Edit
+						</button>
+					</td>
 				</tr>
+
+				<!-- Modal -->
+				<form action="{{ url_for('review_modify') }}" method="get">
+					<input type="hidden" name="id" value="{{ review.id }}">
+					<div class="modal fade" id="exampleModal{{ loop.index }}" tabindex="-1"
+						aria-labelledby="exampleModalLabel" aria-hidden="true">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h1 class="modal-title fs-5" id="exampleModalLabel">리뷰 수정하기</h1>
+									<button type="button" class="btn-close" data-bs-dismiss="modal"
+										aria-label="Close"></button>
+								</div>
+								<div class="modal-body">
+									<div class="mb-3">
+										<label for="exampleFormControlTextarea1" class="form-label">책 리뷰</label>
+										<textarea class="form-control" id="exampleFormControlTextarea1"
+											name="bookReview" rows="3">{{ review.bookReview }}</textarea>
+									</div>
+								</div>
+								<div class="modal-footer">
+									<div class="container d-flex justify-content-between">
+										<div class="container">
+											<div class="form-check">
+												<input class="form-check-input" type="checkbox" value="del"
+													name="delCheck">
+												<label class="form-check-label" for="flexCheckDefault">
+													삭제하기
+												</label>
+											</div>
+										</div>
+										<div class="container d-flex justify-content-evenly">
+											<button type="button" class="btn btn-secondary"
+												data-bs-dismiss="modal">취소하기</button>
+											<button type="submit" class="btn btn-primary">수정하기</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
 				{% endfor %}
 			</tbody>
 		</table>
 	</div>
 
-	<!-- 페이지네이션 -->
-	<div class="container d-flex justify-content-center mt-5">
-		<nav aria-label="...">
-			<ul class="pagination">
-				<li class="page-item disabled">
-					<a class="page-link">Previous</a>
-				</li>
-				<li class="page-item"><a class="page-link" href="#">1</a></li>
-				<li class="page-item active" aria-current="page">
-					<a class="page-link" href="#">2</a>
-				</li>
-				<li class="page-item"><a class="page-link" href="#">3</a></li>
-				<li class="page-item">
-					<a class="page-link" href="#">Next</a>
-				</li>
-			</ul>
-		</nav>
+	<!-- Prev, Next 버튼 -->
+	<div class="container d-flex justify-content-between">
+		<button type="button" class="btn btn-link btn-lg" id="prevBtn">&laquo; Prev</button>
+		<button type="button" class="btn btn-link btn-lg" id="nextBtn">Next &raquo</button>
 	</div>
 	<script>
+		// prevBtn이 눌렸을 때 주소 변경
+		document.getElementById("prevBtn").addEventListener("click", function () {
+			var currentURL = window.location.href;
+			var regex = /(\d+)(?![\d\D]*\d)/;
+			var match = currentURL.match(regex);
+			if (match) {
+				var currentPage = match[match.length - 1]
+				if (currentPage > 1) {
+					var prevPage = parseInt(currentPage) - 1;
+					var modifiedURL = currentURL.replace(regex, prevPage);
+					window.location.href = modifiedURL;
+				}
+			}
+		})
+
+		// nextBtn이 눌렸을 때 주소 변경
+		document.getElementById("nextBtn").addEventListener("click", function () {
+			var currentURL = window.location.href;
+			var regex = /(\d+)(?![\d\D]*\d)/;
+			var match = currentURL.match(regex);
+			if (match) {
+				var currentPage = match[match.length - 1]
+				var nextPage = parseInt(currentPage) + 1;
+				var modifiedURL = currentURL.replace(regex, nextPage);
+				window.location.href = modifiedURL;
+			}
+		})
 	</script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
 		integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"

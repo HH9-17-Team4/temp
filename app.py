@@ -55,6 +55,7 @@ class Bestseller(db.Model):
 # 책 리뷰 DB
 class Review(db.Model):
   id = db.Column(db.Integer, primary_key=True)
+  time = db.Column(db.String(30), nullable=False)
   userName = db.Column(db.String(255), nullable=False)
   bookIsbn = db.Column(db.String(20), nullable=False)
   bookTitle = db.Column(db.String(255), nullable=False)
@@ -228,22 +229,52 @@ def loan(isbnCode=9791192389325, regionCode=11):
 	# rjson = res.json()
 	return render_template("loan.html")
 
-# 전체 리뷰
-@app.route('/reviews')
-def reviews():
-  reviewList = Review.query.all()
-  return render_template('reviews.html', data=reviewList)
+# reviews 전체
+@app.route('/reviews/<page>')
+def reviews(page):
+  offset = (int(page) - 1) * 10
+  reviewList = Review.query.order_by(Review.id.desc()).offset(offset).limit(10).all()
+  bookList = Bestseller.query.all()
+  return render_template('reviews.html', reviewData=reviewList, bookData=bookList)
 
-# 책별 리뷰
-@app.route('/review/<bookIsbn>/')
-def review_filter(bookIsbn):
+# reviews 필터
+@app.route('/reviews/<bookIsbn>/<page>')
+def reviews_filter(bookIsbn, page):
+  offset = (int(page) - 1) * 10
+  filteredList = Review.query.filter_by(bookIsbn=bookIsbn).order_by(Review.id.desc()).offset(offset).limit(10).all()
+  bookList = Bestseller.query.all()
+  return render_template('reviews.html', reviewData=filteredList, bookData=bookList)
+
+# reviews 수정 및 삭제
+@app.route('/reviews/modify/')
+def reviews_modify():
+  # form에서 보낸 데이터 수신
+  idReceive = request.args.get("id")
+  reviewReceive = request.args.get("bookReview")
+  delCheck = request.args.get("delCheck")
+  print(idReceive)
+  record = Review.query.get(idReceive)
+  if delCheck == 'del':
+    db.session.delete(record)
+    db.session.commit()
+  else:
+    record.bookReview = reviewReceive
+    db.session.commit()
+  pos = Review.query.filter(Review.id > record.id).count() + 1
+  pageNum = (pos // 10) + 1
+  return redirect(url_for('reviews', page=pageNum))
+
+# 개별 리뷰 작성
+@app.route('/review/<bookIsbn>/<page>')
+def review_filter(bookIsbn, page):
+  offset = (int(page) - 1) * 10
   id = Review.query.order_by(Review.id.desc()).first()
   idNum = id.id + 1 if id else 1
   bookList = Bestseller.query.filter_by(bookIsbn=bookIsbn).first()
-  filteredList = Review.query.filter_by(bookIsbn=bookIsbn).all()
+  filteredList = Review.query.filter_by(bookIsbn=bookIsbn).order_by(Review.id.desc()).offset(offset).limit(10).all()
   return render_template('review.html', filteredData=filteredList, bookData=bookList, id=idNum)
 
-# 리뷰 작성 페이지
+# 개별 리뷰 작성 시도
 @app.route('/review/write/')
 def review_write():
   # form에서 보낸 데이터 수신
@@ -252,11 +283,31 @@ def review_write():
   isbnReceive = request.args.get("bookIsbn")
   titleReceive = request.args.get("bookTitle")
   reviewReceive = request.args.get("bookReview")
+  time = datetime.now().strftime("%y-%m-%d %H:%M:%S")
   # db에 저장
-  data = Review(id=idReceive, userName=userNameReceive, bookIsbn=isbnReceive, bookTitle=titleReceive, bookReview=reviewReceive)
+  data = Review(id=idReceive, time=time, userName=userNameReceive, bookIsbn=isbnReceive, bookTitle=titleReceive, bookReview=reviewReceive)
   db.session.add(data)
   db.session.commit()
-  return redirect(url_for('review_filter', bookIsbn=isbnReceive))
+  return redirect(url_for('review_filter', bookIsbn=isbnReceive, page=1))
+
+# 개별 리뷰 수정 및 삭제
+@app.route('/review/modify/')
+def review_modify():
+  # form에서 보낸 데이터 수신
+  idReceive = request.args.get("id")
+  reviewReceive = request.args.get("bookReview")
+  delCheck = request.args.get("delCheck")
+  print(idReceive)
+  record = Review.query.get(idReceive)
+  if delCheck == 'del':
+    db.session.delete(record)
+    db.session.commit()
+  else:
+    record.bookReview = reviewReceive
+    db.session.commit()
+  pos = Review.query.filter_by(bookIsbn=record.bookIsbn).filter(Review.id > record.id).count() + 1
+  pageNum = (pos // 10) + 1
+  return redirect(url_for('review_filter', bookIsbn=record.bookIsbn, page=pageNum))
 
 if __name__ == "__main__":
   app.run(debug=True)
