@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from bs4 import BeautifulSoup
@@ -16,6 +16,7 @@ LIB_SIZE = 350
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
+app.secret_key = '132435'
 app.config['SQLALCHEMY_DATABASE_URI'] =\
   'sqlite:///' + os.path.join(basedir, 'database.db')
 
@@ -123,7 +124,7 @@ def test():
   question = Question.query.first()
   return render_template("test.html", data=question)
 
-@app.route("/result", methods=["POST"])
+@app.route("/result", methods=["POST","GET"])
 def result():
   question_id = request.form['question_id']
   selected_option = request.form['option']  # 선택된 옵션 (A 또는 B)
@@ -192,12 +193,18 @@ def map_store():
     soup2 = BeautifulSoup(rq2.text, 'xml')
 
     offStoreInfo_elements = soup2.find_all('offStoreInfo')
-
+    
+    
+        
     for offStoreInfo in offStoreInfo_elements:
         offCode = offStoreInfo.find('offCode').text
         offName = offStoreInfo.find('offName').text
         link = offStoreInfo.find('link').text
 
+    if not offCode:
+        flash("재고가 없습니다.", "error")
+        return redirect(url_for('map'))
+    
     # 데이터를 DB에 저장하기
     # 수정된 부분: request.args를 사용하여 데이터 받기
     isbn_receive = isbn
