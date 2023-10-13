@@ -72,8 +72,10 @@
 						<a href="{{ book.link }}" class="btn btn-primary me-md-2" role="button" target="_blank"
 							type="button">구매하기</a>
 						<!-- <a href="{{ url_for('loan', isbnCode=book.isbn13) }}" class="btn btn-secondary me-md-2" -->
-						<a href="{{ url_for('loan') }}" class="btn btn-secondary me-md-2"
-							role="button" target="_blank" type="button" id="loanBtn">대여하기</a>
+						<a href="{{ url_for('loan') }}" class="btn btn-secondary me-md-2" role="button" target="_blank"
+							type="button" id="loanBtn">대여하기</a>
+						<a href="{{ url_for('review_filter', bookIsbn=book.isbn13) }}" class="btn btn-success me-md-2" role="button" target="_blank"
+							type="button" id="loanBtn">리뷰쓰기</a>
 					</div>
 				</div>
 			</div>

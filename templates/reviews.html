@@ -46,32 +46,6 @@
 		</div>
 	</nav>
 
-	<div class="container pt-5 mb-5">
-		<form action="{{ url_for('review_write') }}" method="get">
-			<div class="mb-3 d-flex justify-content-evenly">
-				<div class="flex-fill m-1">
-					<label for="exampleFormControlInput1" class="form-label">이름</label>
-					<input type="text" class="form-control" name="userName">
-				</div>
-				<div class="flex-fill m-1">
-					<label for="exampleFormControlInput1" class="form-label">책 이름</label>
-					<input class="form-control" type="text" placeholder="{{ bookData.bookTitle }}"
-						aria-label="Disabled input example" disabled>
-				</div>
-			</div>
-			<div class="mb-3">
-				<label for="exampleFormControlTextarea1" class="form-label">책 리뷰</label>
-				<textarea class="form-control" name="bookReview" rows="3"></textarea>
-			</div>
-			<input type="hidden" name="id" value="{{ id }}">
-			<input type="hidden" name="bookIsbn" value="{{ bookData.bookIsbn }}">
-			<input type="hidden" name="bookTitle" value="{{ bookData.bookTitle }}">
-			<div class="container d-flex justify-content-end">
-				<button type="submit" class="btn btn-primary">글쓰기</button>
-			</div>
-		</form>
-	</div>
-
 	<div class="container">
 		<table class="table table-striped-columns">
 			<thead>
@@ -83,7 +57,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				{% for review in filteredData %}
+				{% for review in data %}
 				<tr>
 					<th scope="row">{{ review.id }}</th>
 					<td>{{ review.userName }}</td>
