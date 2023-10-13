@@ -178,6 +178,9 @@ def map_store():
     isbn = ""
     title = ""
     price = ""
+    offName = ""
+    offCode = ""
+    link = ""
 
     for item in soup.find_all('item'):
         isbn = item.find('isbn').text
@@ -201,7 +204,7 @@ def map_store():
     title_receive = title
     price_receive = price
     offCode_receive = offCode
-    offName_receive = '알라딘' + offName
+    offName_receive = '알라딘 서점' + offName
     link_receive = link
     
     existing_store = Store.query.filter_by(Id=isbn_receive).first()
