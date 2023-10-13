@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from bs4 import BeautifulSoup
@@ -84,6 +84,12 @@ def main():
   res = requests.get(f"https://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey={API_KEY_CODE_ALADIN}&QueryType=Bestseller&MaxResults={numOfBook}&start=1&SearchTarget=Book&output=js&Year={year}&Month={month}&Week={week}&Version=20131101")
   rjson = res.json()
   context = rjson['item']
+  for data in context:
+    temp = Bestseller.query.filter_by(bookIsbn=data['isbn13']).first()
+    if not temp:
+      bestSellerData = Bestseller(bookIsbn=data['isbn13'], bookTitle=data['title'], bookAuthor=data['author'])
+      db.session.add(bestSellerData)
+      db.session.commit()
   return render_template("main.html", data=context)
 
 @app.route("/team")
