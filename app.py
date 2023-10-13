@@ -46,6 +46,20 @@ class Store(db.Model):
   offName = db.Column(db.String(255))
   link = db.Column(db.String(255))
 
+# 베스트셀러 DB
+class Bestseller(db.Model):
+  bookIsbn = db.Column(db.String(20), primary_key=True)
+  bookTitle = db.Column(db.String(255), nullable=False)
+  bookAuthor = db.Column(db.String(255), nullable=False)
+
+# 책 리뷰 DB
+class Review(db.Model):
+  id = db.Column(db.Integer, primary_key=True)
+  userName = db.Column(db.String(255), nullable=False)
+  bookIsbn = db.Column(db.String(20), nullable=False)
+  bookTitle = db.Column(db.String(255), nullable=False)
+  bookReview = db.Column(db.String(255))
+
 with app.app_context():
   db.create_all()
 
@@ -207,6 +221,36 @@ def loan(isbnCode=9791192389325, regionCode=11):
 	# res = requests.get(f"http://data4library.kr/api/libSrchByBook?authKey={API_KEY_CODE_LIB}&isbn={isbnCode}&region={regionCode}&pageSize={LIB_SIZE}&format=json")
 	# rjson = res.json()
 	return render_template("loan.html")
+
+# 전체 리뷰
+@app.route('/reviews')
+def reviews():
+  reviewList = Review.query.all()
+  return render_template('reviews.html', data=reviewList)
+
+# 책별 리뷰
+@app.route('/review/<bookIsbn>/')
+def review_filter(bookIsbn):
+  id = Review.query.order_by(Review.id.desc()).first()
+  idNum = id.id + 1 if id else 1
+  bookList = Bestseller.query.filter_by(bookIsbn=bookIsbn).first()
+  filteredList = Review.query.filter_by(bookIsbn=bookIsbn).all()
+  return render_template('review.html', filteredData=filteredList, bookData=bookList, id=idNum)
+
+# 리뷰 작성 페이지
+@app.route('/review/write/')
+def review_write():
+  # form에서 보낸 데이터 수신
+  idReceive = request.args.get("id")
+  userNameReceive = request.args.get("userName")
+  isbnReceive = request.args.get("bookIsbn")
+  titleReceive = request.args.get("bookTitle")
+  reviewReceive = request.args.get("bookReview")
+  # db에 저장
+  data = Review(id=idReceive, userName=userNameReceive, bookIsbn=isbnReceive, bookTitle=titleReceive, bookReview=reviewReceive)
+  db.session.add(data)
+  db.session.commit()
+  return redirect(url_for('review_filter', bookIsbn=isbnReceive))
 
 if __name__ == "__main__":
   app.run(debug=True)
