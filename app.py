@@ -282,9 +282,7 @@ def reviews_modify():
   else:
     record.bookReview = reviewReceive
     db.session.commit()
-  pos = Review.query.filter(Review.id > record.id).count() + 1
-  pageNum = (pos // 10) + 1
-  return redirect(url_for('reviews', page=pageNum))
+  return redirect(url_for('reviews', page=1))
 
 # 개별 리뷰 작성
 @app.route('/review/<bookIsbn>/<page>')
