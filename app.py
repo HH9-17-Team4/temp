@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from bs4 import BeautifulSoup
@@ -16,6 +16,7 @@ LIB_SIZE = 350
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
+app.secret_key = '132435'
 app.config['SQLALCHEMY_DATABASE_URI'] =\
   'sqlite:///' + os.path.join(basedir, 'database.db')
 
@@ -124,7 +125,17 @@ def test():
   question = Question.query.first()
   return render_template("test.html", data=question)
 
-@app.route("/result", methods=["POST"])
+def search_book_img(book_name):
+  url = f"https://www.aladin.co.kr/search/wsearchresult.aspx?SearchTarget=All&SearchWord={book_name}"
+  headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36'}
+  data = requests.get(url, headers=headers)
+  soup = BeautifulSoup(data.text, 'html.parser')
+  book_img_url = soup.select_one("div.ss_book_box img.front_cover")["src"]
+
+  return book_img_url
+
+@app.route("/result", methods=["POST", "GET"])
 def result():
   question_id = request.form['question_id']
   selected_option = request.form['option']  # 선택된 옵션 (A 또는 B)
@@ -149,12 +160,14 @@ def result():
   book_info = answer.book.split(" : ")
   book_name = book_info[0]
   book_desc = book_info[1]
+  book_img_url = search_book_img(book_name)
 
   context = {
     "mbti": calculated_mbti,
     "desc": answer.description,
     "book_name": book_name,
-    "book_desc": book_desc
+    "book_desc": book_desc,
+    "book_img_url": book_img_url
   }
   return render_template("result.html", data=context)
 
@@ -179,6 +192,9 @@ def map_store():
     isbn = ""
     title = ""
     price = ""
+    offName = ""
+    offCode = ""
+    link = ""
 
     for item in soup.find_all('item'):
         isbn = item.find('isbn').text
@@ -190,19 +206,25 @@ def map_store():
     soup2 = BeautifulSoup(rq2.text, 'xml')
 
     offStoreInfo_elements = soup2.find_all('offStoreInfo')
-
+    
+    
+        
     for offStoreInfo in offStoreInfo_elements:
         offCode = offStoreInfo.find('offCode').text
         offName = offStoreInfo.find('offName').text
         link = offStoreInfo.find('link').text
 
+    if not offCode:
+        flash("재고가 없습니다.", "error")
+        return redirect(url_for('map'))
+    
     # 데이터를 DB에 저장하기
     # 수정된 부분: request.args를 사용하여 데이터 받기
     isbn_receive = isbn
     title_receive = title
     price_receive = price
     offCode_receive = offCode
-    offName_receive = '알라딘' + offName
+    offName_receive = '알라딘 서점' + offName
     link_receive = link
     
     existing_store = Store.query.filter_by(Id=isbn_receive).first()
